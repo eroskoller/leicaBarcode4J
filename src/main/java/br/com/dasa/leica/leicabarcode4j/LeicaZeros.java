@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package br.com.dasa.leica;
+package br.com.dasa.leica.leicabarcode4j;
 
 
 import java.awt.Color;
