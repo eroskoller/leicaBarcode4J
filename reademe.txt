@@ -23,3 +23,24 @@ seguem em anexo também, alem dos fontes em projeto netbeans as 3 bibliotecas
 
 
 java -cp barcode4j-2.1.0.jar;leicaBarcode4J-1.0-SNAPSHOT.jar br.com.dasa.leica.leicabarcode4j.LeicaZeros -impressora IP-C -porta 9100
+
+
+
+---------------------------------------------------------------------------
+
+ echo 123456789012 >> teste.txt
+less teste.txt
+lpstat -v -p
+
+device for leica: socket://10.112.0.9:9111
+device for lexmarkx644: socket://10.112.38.21:9100
+device for rawqueue: socket://localhost:9100
+printer leica is idle.  enabled since Mon 14 Apr 2014 06:12:43 PM BRT
+printer lexmarkx644 is idle.  enabled since Mon 14 Apr 2014 05:14:49 PM BRT
+        Ready to print.
+printer rawqueue now printing rawqueue-144.  enabled since Mon 14 Apr 2014 05:15:10 PM BRT
+        The printer is busy.
+
+lpstat -P rawgueue teste.txt
+
+
