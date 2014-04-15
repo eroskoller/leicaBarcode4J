@@ -228,16 +228,6 @@ public class Leica implements Printable {
             System.err.println("erro no job.print()");
             e.printStackTrace();
         }
-        /*
-         boolean doPrint = job.printDialog();
-         if (doPrint) {
-         try {
-         job.print();
-         } catch (Exception e) {
-         e.printStackTrace();
-         }
-         }
-         */
     }
 
     @Override
