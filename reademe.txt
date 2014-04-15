@@ -1,0 +1,25 @@
+o programa assume jkd1.7.
+para compilar o programa, as duas bibliotecas google devem estar acessiveis pelo maven. Instala localmente ou no artifactory.
+Na execução do programa esla deverão estar acessíveis também via classpath.
+
+Para instalação:
+
+os 3 jars (core-3.0.0-SNAPSHOT.jar, javase-3.0.0-SNAPSHOT.jar e Leica-1.0.jar) devem ser copiados para uma pasta em uma máquina windows com o driver da Leica instalado e a execução para teste deve ser:
+
+java -cp core-3.0.0-SNAPSHOT.jar;javase-3.0.0-SNAPSHOT.jar;Leica-1.0.jar br.com.dasa.leica.Leica -impressoras
+este opção deverá mostrar todas as impressoras existente nesta máquina. O importante para nós é mostrar a impressora IP-C.
+
+para a execução normal, deverá ser rodado como:
+
+java -cp core-3.0.0-SNAPSHOT.jar;javase-3.0.0-SNAPSHOT.jar;Leica-1.0.jar br.com.dasa.leica.Leica -impressora IP-C -porta 9100
+
+A partir disso, deve ser criada no cups da máquina do MOTION uma fila com qq nome que seja identificado pelo  MOTION, apontando para i IP da máquina aonde vc colocou nosso programa e configurar como socket, na porta 9100, no mode RAW e sem header e tail.
+
+basta entao mandar um arquivo para esta fila, com 1 linha e um código numerico de até 12 digitos que deve sair na impressora.
+
+seguem em anexo também, alem dos fontes em projeto netbeans as 3 bibliotecas 
+
+
+
+
+java -cp barcode4j-2.1.0.jar;leicaBarcode4J-1.0-SNAPSHOT.jar br.com.dasa.leica.leicabarcode4j.LeicaZeros -impressora IP-C -porta 9100
