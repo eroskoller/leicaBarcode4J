@@ -44,7 +44,7 @@ import javax.print.attribute.standard.MediaPrintableArea;
  */
 public class Leica implements Printable {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         System.out.println("Inside class Leica ");
         int ic = 0;
@@ -109,24 +109,48 @@ public class Leica implements Printable {
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(9);
         }
+        
         if (porta != 0) {
-            try (ServerSocket serverSocket = new ServerSocket(porta);
-                    Socket clientSocket = serverSocket.accept();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));) {
-                while ((codigo = in.readLine()) != null && codigo.length()>0) {
-                    codigo = codigo.trim().replaceAll("\\D", "");
-//                    System.out.println("codigo: " + codigo);
-                    if (codigo.length() == 0) {
-                        continue;
+            //            try (ServerSocket serverSocket = new ServerSocket(porta);
+            
+            while (true) {
+                ServerSocket serverSocket = null;
+                Socket clientSocket =  null;
+                try {
+                    serverSocket = new ServerSocket(porta);
+                    clientSocket = serverSocket.accept();
+                    clientSocket.setKeepAlive(true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                    while ((codigo = in.readLine()) != null && codigo.length() > 0) {
+                        codigo = codigo.trim().replaceAll("\\D", "");
+                        System.out.println("codigo: " + codigo);
+                        if (codigo.length() == 0) {
+                            System.out.println("codigo.length() == 0");
+                            continue;
+                        }
+                        System.out.println("codigo.trim() : " + codigo.trim() + "     currentPath : " + currentPath);
+                        programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath);
+                        new File(currentPath + codigo + ".png").delete();
                     }
-//                    System.out.println("codigo.trim() : " + codigo.trim()+"     currentPath : "+currentPath);
-                    programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath);
-                    new File(currentPath+codigo+".png").delete();
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(10);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(10);
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(10);
+                if(clientSocket != null && !clientSocket.isClosed()){
+                    clientSocket.close();
+                    serverSocket.close();
+                }
+                System.out.println("Out......................");
             }
+            
+            
+            
         } else {
             programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath);
         }
@@ -150,10 +174,12 @@ public class Leica implements Printable {
 //            System.out.println("buffer: " + buffer);
         } catch (WriterException ex) {
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1);
+            System.out.println(ex.getMessage());
+//            System.exit(1);
         } catch (IOException ex) {
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(2);
+            System.out.println(ex.getMessage());
+//            System.exit(2);
         }
 
         try {
@@ -167,14 +193,15 @@ public class Leica implements Printable {
         } catch (IOException ex) {
             System.out.println(ex);
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(3);
+//            System.exit(3);
         }
 
         try {
             geraSaida(saida, buffer);
         } catch (IOException ex) {
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(4);
+            System.out.println(ex);
+//            System.exit(4);
         }
 
         imprime(job);
