@@ -112,7 +112,6 @@ public class Leica implements Printable {
         
         if (porta != 0) {
             //            try (ServerSocket serverSocket = new ServerSocket(porta);
-            
             while (true) {
                 ServerSocket serverSocket = null;
                 Socket clientSocket =  null;
@@ -121,18 +120,22 @@ public class Leica implements Printable {
                     clientSocket = serverSocket.accept();
                     clientSocket.setKeepAlive(true);
                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-                    while ((codigo = in.readLine()) != null && codigo.length() > 0) {
-                        codigo = codigo.trim().replaceAll("\\D", "");
-                        System.out.println("codigo: " + codigo);
-                        if (codigo.length() == 0) {
-                            System.out.println("codigo.length() == 0");
-                            continue;
+                    
+                    while ((codigo = in.readLine()) != null) {
+                        if (codigo.length() == 12) {
+                            codigo = codigo.trim().replaceAll("\\D", "");
+                            System.out.println("codigo: " + codigo);
+                            if (codigo.length() == 0) {
+                                System.out.println("codigo.length() == 0");     
+                                continue;
+                            }
+                            System.out.println("codigo.trim() : " + codigo.trim() + "     currentPath : " + currentPath);
+                            programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath);
+                        } else {
+                            System.out.println("codigo.length() != 12)"); System.out.println("codigo = "+codigo);
                         }
-                        System.out.println("codigo.trim() : " + codigo.trim() + "     currentPath : " + currentPath);
-                        programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath);
-                        new File(currentPath + codigo + ".png").delete();
                     }
+                    
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                     Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,6 +149,7 @@ public class Leica implements Printable {
                     clientSocket.close();
                     serverSocket.close();
                 }
+//                new File(currentPath + codigo + ".png").delete();
                 System.out.println("Out......................");
             }
             
@@ -156,6 +160,11 @@ public class Leica implements Printable {
         }
     }
 
+    public static void stop(){
+        System.out.println("Exiting serice .    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .           ");
+        System.exit(0);
+    }
+    
     private BufferedImage imagem = null;
     private int tc = 0;
     private int ta = 0;
@@ -251,9 +260,9 @@ public class Leica implements Printable {
         aset.add(mpa);
         try {
             job.print(aset);
-        } catch (Exception e) {
+        } catch (PrinterException e) {
             System.err.println("erro no job.print()");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
