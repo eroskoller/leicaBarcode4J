@@ -23,18 +23,19 @@ import javax.imageio.ImageIO;
  *
  * @author eros
  */
-public class CrunchifyQRCode {
+public class QRCodeBuilder {
      public static void main(String[] args) {
-        String myCodeText = "http://Crunchify.com/";
+        String myCodeText = "http://Crunchify.com/";   
         String filePath = "/home/eros/CrunchifyQR.png";
-        int size = 20;
+        int width = 14;
+        int height = 28;
         String fileType = "png";
         File myFile = new File(filePath);
         try {
             Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            BitMatrix byteMatrix = qrCodeWriter.encode(myCodeText,BarcodeFormat.QR_CODE, size, size, hintMap);
+            BitMatrix byteMatrix = qrCodeWriter.encode(myCodeText,BarcodeFormat.QR_CODE, width, height, hintMap);
             
             int CrunchifyWidth = byteMatrix.getWidth();
             BufferedImage image = new BufferedImage(CrunchifyWidth+100, CrunchifyWidth,
