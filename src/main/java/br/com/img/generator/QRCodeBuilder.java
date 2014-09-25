@@ -69,13 +69,13 @@ public class QRCodeBuilder {
         System.out.println("\n\nYou have successfully created QR Code.");
     }       
      
-     public byte[] buildBarQRCode(String filePath, String code,String amostra,String fap,String codOrder, String format) throws IOException {
+     public byte[] buildBarQRCode(String filePath, String code,String amostra,String fap,String codOrder, String fileType) throws IOException {
          
 //         String code = "http://Crunchify.com/";   
 //        String filePath = "/home/eros/CrunchifyQR.png";
         int width = 14;
         int height = 28;
-        String fileType = "png";
+//        String fileType = "png";
         File myFile = new File(filePath);
         try {
             Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
