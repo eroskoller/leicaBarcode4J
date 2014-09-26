@@ -5,7 +5,7 @@
  */
 package br.com.dasa.leica;
 
-import br.com.img.generator.QRCodeBuilder;
+import br.com.img.generator.QRCodeBuilder;   
 import java.io.File;
 import java.io.IOException;
 
