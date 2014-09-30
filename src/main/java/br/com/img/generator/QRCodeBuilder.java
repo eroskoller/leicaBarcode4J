@@ -53,10 +53,10 @@ public class QRCodeBuilder {
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, CrunchifyWidth+100, CrunchifyWidth);
             graphics.setColor(Color.BLACK);
-            int x = 40;
+            int x = 28;
             graphics.drawString(lamina.getAmostra(), x, 10);
             graphics.drawString(lamina.getFap(), x, 20);
-            graphics.drawString(lamina.getCodeOrdem(), x, 30);
+            graphics.drawString(lamina.getCodeOrdem(), x*2, 30);
             
             
             for (int i = 0; i < CrunchifyWidth; i++) {

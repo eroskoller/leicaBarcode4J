@@ -22,10 +22,11 @@ import java.io.IOException;
 public class LeicaTeste {
 
     public static void main(String[] args) throws IOException {
-//        QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
-//        byte[] arrayByte = qRCodeBuilder.buildBarQRCode("/home/eros/teste_qrcode", "101010101010", "101010101010", "123fap456", "a3f", "png");
+        QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
+        Lamina lamina = new Lamina("090909090909", "010101010101", "A1F");
+        byte[] arrayByte = qRCodeBuilder.buildBarQRCode("/home/eros/", lamina, "png","n");
         
-        System.out.println(new File("/home/eros/CrunchifyQR.png").getAbsolutePath());
+//        System.out.println(new File("/home/eros/CrunchifyQR2.png").getAbsolutePath());
     }
     
 }
