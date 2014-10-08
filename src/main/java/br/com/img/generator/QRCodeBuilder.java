@@ -54,9 +54,9 @@ public class QRCodeBuilder {
             graphics.fillRect(0, 0, CrunchifyWidth+100, CrunchifyWidth);
             graphics.setColor(Color.BLACK);
             int x = 28;
-            graphics.drawString(lamina.getAmostra(), x, 10);
-            graphics.drawString(lamina.getFap(), x, 20);
-            graphics.drawString(lamina.getCodeOrdem(), x*2, 30);
+            graphics.drawString(lamina.getAmostra(), x, 8);
+            graphics.drawString(lamina.getFap(), x, 18);
+            graphics.drawString(lamina.getCodeOrdem(), x, 26);
             
             
             for (int i = 0; i < CrunchifyWidth; i++) {

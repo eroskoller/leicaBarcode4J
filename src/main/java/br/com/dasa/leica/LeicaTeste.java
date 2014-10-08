@@ -23,7 +23,7 @@ public class LeicaTeste {
 
     public static void main(String[] args) throws IOException {
         QRCodeBuilder qRCodeBuilder = new QRCodeBuilder();
-        Lamina lamina = new Lamina("amostra ..", "... FAP ...", "Cod. Or");
+        Lamina lamina = new Lamina("amostra", "numero fap ", "cod. ordem");
         byte[] arrayByte = qRCodeBuilder.buildBarQRCode("/home/eros/", lamina, "png","n");
         
 //        System.out.println(new File("/home/eros/CrunchifyQR2.png").getAbsolutePath());
