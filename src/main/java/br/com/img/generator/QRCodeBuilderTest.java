@@ -73,6 +73,7 @@ public class QRCodeBuilderTest {
         // develop branch
         // merging  into master
         //creating a new stable branch 0.112
+        //trying smartgit
         
     }       
   
