@@ -70,7 +70,8 @@ public class QRCodeBuilderTest {
         System.out.println("\n\nYou have successfully created QR Code.");
         
         // insite branch 0.111 mergo into master 
-        
+        // develop branch
+        // merging  into master
         
         
     }       
