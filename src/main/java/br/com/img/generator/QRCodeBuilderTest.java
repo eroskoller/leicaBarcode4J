@@ -72,7 +72,7 @@ public class QRCodeBuilderTest {
         // insite branch 0.111 mergo into master 
         // develop branch
         // merging  into master
-        
+        //creating a new stable branch 0.112
         
     }       
   
