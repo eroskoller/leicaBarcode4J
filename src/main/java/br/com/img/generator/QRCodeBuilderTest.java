@@ -74,6 +74,7 @@ public class QRCodeBuilderTest {
         // merging  into master
         //creating a new stable branch 0.112
         //trying smartgit
+        // fail to use smartgit cause of the fucking proxy
         
     }       
   
