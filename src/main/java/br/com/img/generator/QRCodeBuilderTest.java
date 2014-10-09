@@ -67,7 +67,7 @@ public class QRCodeBuilderTest {
         } catch (WriterException | IOException e) {
             e.printStackTrace();
         }
-        System.out.println("\n\nYou have successfully created QR Code.");
+        System.out.println("\n\nYou have successfully created QR Code.");    
         
         // insite branch 0.111 mergo into master 
         // develop branch
@@ -75,6 +75,7 @@ public class QRCodeBuilderTest {
         //creating a new stable branch 0.112
         //trying smartgit
         // fail to use smartgit cause of the fucking proxy
+        //trying smartgit
         
     }       
   
