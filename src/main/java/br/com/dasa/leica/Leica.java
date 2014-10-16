@@ -195,7 +195,7 @@ public class Leica implements Printable {
                     buffer = makeInterleaved2of5Code128(path, codigo, ic, ia,deleteImg);
                         break;
                 case "QRCode":
-                    Lamina lamina = new Gson().fromJson(codigo, Lamina.class);
+                    Lamina lamina = new Lamina(codeType, "|");
                     buffer = makeQRCode(path, lamina, ic, ia,deleteImg);
                     break;
                  default:

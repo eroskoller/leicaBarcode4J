@@ -6,6 +6,8 @@
 package br.com.dasa.leica;
 
 import com.google.gson.Gson;
+import java.util.*;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -19,6 +21,25 @@ public class Lamina {
     private String nomePac;
     private Character sexo;
     private String dataNasc;
+
+    public Lamina(String strTokens, String pattern) {
+        int minimum = 20;
+        if (strTokens.length() > minimum) {
+            StringTokenizer st = new StringTokenizer(strTokens, pattern);
+            List<String> listTokens = new ArrayList<>();
+            while (st.hasMoreTokens()) {
+                listTokens.add(st.nextToken());
+            }
+            if (!listTokens.isEmpty() && listTokens.size() == 3) {
+                this.amostra = listTokens.get(0);
+                this.fap = listTokens.get(1);
+                this.codeOrdem = listTokens.get(2);
+            }
+        } else {
+            System.out.println("strTokens is less than " + minimum);
+        }
+
+    }
 
     public Lamina(String amostra, String fap, String codeOrdem) {
         this.amostra = amostra;
@@ -85,9 +106,7 @@ public class Lamina {
 
     @Override
     public String toString() {
-        return  new Gson().toJson(this);
+        return new Gson().toJson(this);
     }
-    
-    
-    
+
 }
