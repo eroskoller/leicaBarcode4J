@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.dasa.leica</groupId>
     <artifactId>leicaBarCode4J</artifactId>
-    <version>1.0</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
     
     

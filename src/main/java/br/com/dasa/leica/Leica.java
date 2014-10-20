@@ -8,7 +8,6 @@ package br.com.dasa.leica;
 
 import br.com.img.generator.Code128Util;
 import br.com.img.generator.QRCodeBuilder;
-import com.google.gson.Gson;
 import com.google.zxing.WriterException;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -29,6 +28,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -46,6 +48,17 @@ import javax.print.attribute.standard.MediaPrintableArea;
  */
 public class Leica implements Printable {
 
+    
+    
+    
+    private BufferedImage bufferedImage = null;
+    private File fileImage = null;
+    private int tc = 0;
+    private int ta = 0;
+    private int fc = 0;
+    private int fa = 0;
+    
+
     public static void main(String[] args) throws IOException {
 
         System.out.println("Inside class Leica ");
@@ -60,8 +73,8 @@ public class Leica implements Printable {
         String impressora = null;
         String tipoimpressora = null;
         int porta = 0;
-        String deleteImg = "S";
-        String currentPath = Leica.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        boolean deleteImg = false;
+        
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -103,14 +116,20 @@ public class Leica implements Printable {
                     porta = Integer.parseInt(args[++i]);
                     break;
                 case "-deleteImg":
-                    deleteImg = args[++i];
+                    if (args[++i].equalsIgnoreCase("S")) {
+                        deleteImg = true;
+                    } else {
+                        deleteImg = false;
+                    }
                     break;
             }
         }
-        Leica programa = new Leica();
+//        fileImage = new File(filePath+ lamina.getAmostra() + "." + format);
+        Leica leicaPrinter = new Leica();
+        SimpleDateFormat formateS = new SimpleDateFormat("YYYY_MM_dd_hh_mm_ss");
         PrinterJob job = null;
         try {
-            job = programa.obtemJob(tipoimpressora, impressora);
+            job = leicaPrinter.obtemJob(tipoimpressora, impressora);
         } catch (PrinterException ex) {
             Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(9);
@@ -122,38 +141,56 @@ public class Leica implements Printable {
                 ServerSocket serverSocket = null;
                 Socket clientSocket =  null;
                 try {
-                    serverSocket = new ServerSocket(porta);
-                    clientSocket = serverSocket.accept();
-                    clientSocket.setKeepAlive(true);
+                    if(serverSocket == null){
+                        serverSocket = new ServerSocket(porta);
+                        clientSocket = serverSocket.accept();
+                        clientSocket.setKeepAlive(true);
+                    }
+                    
                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     
                     while ((codigo = in.readLine()) != null) {
+                        String fileImagPath = Leica.class.getProtectionDomain().getCodeSource().getLocation().getFile()+formateS.format(new Date())+".png";
+                        leicaPrinter.setFileImage(new File(fileImagPath));
                         if (codigo.length() >= 12) {
-                            codigo = codigo.trim().replaceAll("\\D", "");
+                            codigo = codigo.trim();
                             System.out.println("codigo: " + codigo);
                             if (codigo.length() == 0) {
                                 System.out.println("codigo.length() == 0");     
                                 continue;
                             }
-                            System.out.println("codigo.trim() : " + codigo.trim() + "     currentPath : " + currentPath);
-                            if(codigo.length() == 12){
-                                programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath,"Interleaved2of5Code128",deleteImg);
-                            }else if(codigo.length() > 12){
-                                programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath,"QRCode",deleteImg);
+                            System.out.println("codigo.trim() : " + codigo.trim() + "     currentPath : " + fileImagPath);
+                            if(codigo.replaceAll("\\D", "").length() == 12){
+                                codigo = codigo.replaceAll("\\D", "");
+                                leicaPrinter.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, fileImagPath,"Interleaved2of5Code128");
+                            }else if(codigo.length() > 12 &&  new StringTokenizer(codigo, "|").countTokens() >= 2){
+                                System.out.println("codigo = "+codigo);
+                                leicaPrinter.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, fileImagPath,"QRCode");
+                            }else{
+                                break;
                             }
-                            
                         } else {
                             System.out.println("codigo.length() != 12)"); System.out.println("codigo = "+codigo);
+                            break;
+                        }
+                        if(deleteImg){
+                            System.out.println("Trying to delete img leicaPrinter.fileImage.delete() = "+leicaPrinter.fileImage.delete());
                         }
                     }
-                    
                 } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
-                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
+//                    System.out.println(ex.getMessage());
+//                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(10);
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+//                    System.out.println(ex.getMessage());
+//                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
 //                System.exit(10);
                 } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
+//                    System.out.println(ex.getMessage());
+//                    Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
 //                System.exit(10);
                 }
                 if(clientSocket != null && !clientSocket.isClosed()){
@@ -170,88 +207,81 @@ public class Leica implements Printable {
 //            programa.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, currentPath,"Interleaved2of5Code128");
         }
     }
-
-    public static void stop(){
-        System.out.println("Exiting serice .    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .           ");
-        System.exit(0);
-    }
     
-    private BufferedImage imagem = null;
-    private int tc = 0;
-    private int ta = 0;
-    private int fc = 0;
-    private int fa = 0;
 
-    private void principal(int fc, int fa, int tc, int ta, PrinterJob job, String codigo, String saida, int ic, int ia, String path,String codeType,String deleteImg) {
+    private void principal(int fc, int fa, int tc, int ta, PrinterJob job, String codigo, String saida, int ic, int ia, String path,String codeType) throws WriterException, IOException {
         this.tc = tc;
         this.ta = ta;
         this.fc = fc;
         this.fa = fa;
         byte[] buffer = null;
-        try {
+ 
 //            System.out.println("path, codigo, ic, ia : "+path+ codigo);
             switch(codeType){
                 case "Interleaved2of5Code128":
-                    buffer = makeInterleaved2of5Code128(path, codigo, ic, ia,deleteImg);
+                    buffer = makeInterleaved2of5Code128(path, codigo, ic, ia);
                         break;
                 case "QRCode":
-                    Lamina lamina = new Lamina(codeType, "|");
-                    buffer = makeQRCode(path, lamina, ic, ia,deleteImg);
+                    Lamina lamina = new Lamina(codigo, "|");
+                    buffer = makeQRCode(path, lamina, ic, ia);
                     break;
                  default:
-                     buffer = makeInterleaved2of5Code128(path, codigo, ic, ia,deleteImg);
+                     buffer = makeInterleaved2of5Code128(path, codigo, ic, ia);
             }
-            
-//            System.out.println("buffer: " + buffer);
-        } catch (WriterException ex) {
-            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
-//            System.exit(1);
-        } catch (IOException ex) {
-            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
-//            System.exit(2);
-        }
+    
 
-        try {
-//            imagem = ImageIO.read(new ByteArrayInputStream(buffer));
+//              this.imagem = ImageIO.read(new ByteArrayInputStream(buffer));
 
 //            File f = new File
-            Image imageReal = ImageIO.read(new File(path + codigo + ".png"));
+            Image imageReal = ImageIO.read(fileImage);
             BufferedImage buffered = (BufferedImage) imageReal;
-            imagem = buffered;
+            this.bufferedImage = buffered;
+            
+            
+//        try {
+////            imagem = ImageIO.read(new ByteArrayInputStream(buffer));
+//
+////            File f = new File
+//            Image imageReal = ImageIO.read(new File(path + codigo + ".png"));
+//            BufferedImage buffered = (BufferedImage) imageReal;
+//            imagem = buffered;
+//
+//        } catch (IOException ex) {
+////            System.out.println(ex);
+//            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+////            System.exit(3);
+//            ex.printStackTrace();
+//        }
+            
 
-        } catch (IOException ex) {
-            System.out.println(ex);
-            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-//            System.exit(3);
-        }
-
-        try {
             geraSaida(saida, buffer);
-        } catch (IOException ex) {
-            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex);
-//            System.exit(4);
-        }
+            
+//        try {
+//            
+//        } catch (IOException ex) {
+//            Logger.getLogger(Leica.class.getName()).log(Level.SEVERE, null, ex);
+////            System.out.println(ex);
+//            ex.printStackTrace();
+////            System.exit(4);
+//        }
 
         imprime(job);
 
     }
 
-    private byte[] makeInterleaved2of5Code128(String path, String codigo, int comprimento, int altura,String deleteImg) throws WriterException, IOException {
+    private byte[] makeInterleaved2of5Code128(String path, String codigo, int comprimento, int altura) throws WriterException, IOException {
 //        System.out.println("path, codigo, \"png\":  " + path+ codigo+ "png");
         Code128Util code = new Code128Util();
-        byte[] arrayByte = code.buildBarCode128(path, codigo, "png",deleteImg);
+        byte[] arrayByte = code.buildBarCode128(codigo, "png",fileImage);
 //        System.out.println("arrayByte: " + arrayByte);
         return arrayByte;
 //        return fos.toByteArray();
     }
     
-        private byte[] makeQRCode(String path, Lamina lamina, int comprimento, int altura,String deleteImg) throws WriterException, IOException {
+        private byte[] makeQRCode(String path, Lamina lamina, int comprimento, int altura) throws WriterException, IOException,NullPointerException {
 //        System.out.println("path, codigo, \"png\":  " + path+ codigo+ "png");
         QRCodeBuilder code = new QRCodeBuilder();
-        byte[] arrayByte = code.buildBarQRCode(path, lamina, "png",deleteImg);
+        byte[] arrayByte = code.buildBarQRCode(lamina, "png",this.fileImage);
 //        System.out.println("arrayByte: " + arrayByte);
         return arrayByte;
 //        return fos.toByteArray();
@@ -306,10 +336,11 @@ public class Leica implements Printable {
         ((Graphics2D) graphics).translate(this.tc, this.ta);
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, fc, fa);
-        if (this.imagem == null) {
+        if (this.bufferedImage == null) {
             System.out.println("this.imagem == null");
         }
-        graphics.drawImage(this.imagem, 0, 0, fc, fa, 0, 0, this.imagem.getWidth(), this.imagem.getHeight(), null);
+        System.out.println("   this.imagem.getWidth() = "+this.bufferedImage.getWidth() +"     this.imagem.getHeight() =  "+ this.bufferedImage.getHeight());
+        graphics.drawImage(this.bufferedImage, 0, 0, fc, fa, 0, 0, this.bufferedImage.getWidth(), this.bufferedImage.getHeight(), null);
         return PAGE_EXISTS;
     }
 
@@ -346,5 +377,19 @@ public class Leica implements Printable {
             }
         }
         return ps;
+    }
+    
+    
+    public static void stop(){
+        System.out.println("Exiting serice .    .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .           ");
+        System.exit(0);
+    }
+
+    public File getFileImage() {
+        return fileImage;
+    }
+
+    public void setFileImage(File fileImage) {
+        this.fileImage = fileImage;
     }
 }

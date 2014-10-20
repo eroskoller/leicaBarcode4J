@@ -29,7 +29,7 @@ import javax.imageio.ImageIO;
 public class QRCodeBuilder {
     
      
-     public byte[] buildBarQRCode(String filePath, Lamina lamina, String format,String deleteImg) throws IOException {
+        public byte[] buildBarQRCode(Lamina lamina, String format,File fileImage) throws IOException,NullPointerException {
          
 //         String code = "http://Crunchify.com/";   
 //        String filePath = "/home/eros/CrunchifyQR.png";
@@ -37,26 +37,26 @@ public class QRCodeBuilder {
         int height = 28;
 //        String fileType = "png";
         byte[] arrayReturn = null;
-        File imgFile = new File(filePath+ lamina.getAmostra() + "." + format);
+//        fileImage = new File(filePath+ lamina.getAmostra() + "." + format);
         try {
-            Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
+            Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<>();
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix byteMatrix = qrCodeWriter.encode(lamina.getAmostra(),BarcodeFormat.QR_CODE, width, height, hintMap);
             
             int CrunchifyWidth = byteMatrix.getWidth();
-            BufferedImage image = new BufferedImage(CrunchifyWidth+100, CrunchifyWidth,
+            BufferedImage buffuredImage = new BufferedImage(CrunchifyWidth+100, CrunchifyWidth,
                     BufferedImage.TYPE_INT_RGB);
-            image.createGraphics();
+            buffuredImage.createGraphics();
  
-            Graphics2D graphics = (Graphics2D) image.getGraphics();
+            Graphics2D graphics = (Graphics2D) buffuredImage.getGraphics();
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, CrunchifyWidth+100, CrunchifyWidth);
             graphics.setColor(Color.BLACK);
             int x = 28;
-            graphics.drawString(lamina.getAmostra(), x, 8);
-            graphics.drawString(lamina.getFap(), x, 18);
-            graphics.drawString(lamina.getCodeOrdem(), x, 26);
+            graphics.drawString(lamina.getAmostra(), x, 9);
+            graphics.drawString(lamina.getFap(), x, 19);
+            graphics.drawString(lamina.getCodeOrdem(), x, 29);
             
             
             for (int i = 0; i < CrunchifyWidth; i++) {
@@ -66,22 +66,24 @@ public class QRCodeBuilder {
                     }
                 }
             }
-            ImageIO.write(image, format, imgFile);
+            if (ImageIO.write(buffuredImage, format, fileImage)) {
+                buffuredImage = ImageIO.read(fileImage);
+                // get DataBufferBytes from Raster
+                WritableRaster raster = buffuredImage.getRaster();
+                DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
+                arrayReturn = data.getData();
+            }
             
-            image = ImageIO.read( new File(imgFile.getAbsolutePath()));
-            // get DataBufferBytes from Raster
-            WritableRaster raster = image.getRaster();
-            DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
-            arrayReturn = (data.getData());
-//            return  arrayReturn;
         } catch (WriterException | IOException e) {
             e.printStackTrace();
+        }finally{
+            
         }
         System.out.println("\n\nYou have successfully created QR Code.");
          
-        if(deleteImg != null && deleteImg.equalsIgnoreCase("s")){
-            imgFile.delete();
-       }
+//        if(deleteImg){
+//            fileImage.delete();
+//       }
         
          return arrayReturn;
      }

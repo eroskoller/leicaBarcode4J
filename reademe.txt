@@ -22,7 +22,7 @@ seguem em anexo também, alem dos fontes em projeto netbeans as 3 bibliotecas
 
 
 
-java -cp barcode4j-2.1.0.jar;leicaBarcode4J-1.0-SNAPSHOT.jar br.com.dasa.leica.leicabarcode4j.LeicaZeros -impressora IP-C -porta 9100
+java -cp barcode4j-2.1.0.jar;leicaBarcode4J-1.0-SNAPSHOT.jar br.com.dasa.leica.leicabarcode4j.LeicaZeros -impressora IP-C -porta 9100 -deleteImg S
 
 
 

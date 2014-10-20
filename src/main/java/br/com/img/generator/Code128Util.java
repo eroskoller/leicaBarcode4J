@@ -30,7 +30,7 @@ import org.krysalis.barcode4j.tools.UnitConv;
  */
 public class Code128Util {
 
-        public byte[] buildBarCode128(String path, String code, String format,String deleteImg) throws IOException {
+        public byte[] buildBarCode128(String code, String format,File fileImage) throws IOException {
 
             try {
                 Code128Bean bean = new Code128Bean();
@@ -43,8 +43,8 @@ public class Code128Util {
                 bean.doQuietZone(true);
                 //Open output file
 //                System.out.println("path + code + \".\" + format  :"+path + code + "." + format);
-                File outputFile = new File(path + code + "." + format);
-                OutputStream out = new FileOutputStream(outputFile);
+//                fileImage = new File(path + code + "." + format);
+                OutputStream out = new FileOutputStream(fileImage);
                 try {
                     //Set up the canvas provider for monochrome JPEG output 
                     BitmapCanvasProvider canvas = new BitmapCanvasProvider(out, "image/" + format, dpi, BufferedImage.TYPE_BYTE_BINARY, false, 0);
@@ -58,15 +58,12 @@ public class Code128Util {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            File imgFile = new File(path + code + "." + format);
-            BufferedImage bufferedImage = ImageIO.read(imgFile);
+//            File imgFile = new File(path + code + "." + format);
+            BufferedImage bufferedImage = ImageIO.read(fileImage);
             // get DataBufferBytes from Raster
             WritableRaster raster = bufferedImage.getRaster();
             DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
-            byte[] arrayReturn = (data.getData());
-            if(deleteImg != null && deleteImg.equalsIgnoreCase("s")){
-                imgFile.delete();
-            }
+            byte[] arrayReturn = data.getData();
             
             return arrayReturn;
     }

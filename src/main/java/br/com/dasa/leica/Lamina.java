@@ -23,7 +23,7 @@ public class Lamina {
     private String dataNasc;
 
     public Lamina(String strTokens, String pattern) {
-        int minimum = 20;
+        int minimum = 5;
         if (strTokens.length() > minimum) {
             StringTokenizer st = new StringTokenizer(strTokens, pattern);
             List<String> listTokens = new ArrayList<>();
