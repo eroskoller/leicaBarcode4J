@@ -163,7 +163,7 @@ public class Leica implements Printable {
                             if(codigo.replaceAll("\\D", "").length() == 12){
                                 codigo = codigo.replaceAll("\\D", "");
                                 leicaPrinter.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, fileImagPath,"Interleaved2of5Code128");
-                            }else if(codigo.length() > 12 &&  new StringTokenizer(codigo, "|").countTokens() >= 2){
+                            }else if(codigo.length() > 12 &&  new StringTokenizer(codigo, "|").countTokens() >= 3){
                                 System.out.println("codigo = "+codigo);
                                 leicaPrinter.principal(fc, fa, tc, ta, job, codigo, saida, ic, ia, fileImagPath,"QRCode");
                             }else{
