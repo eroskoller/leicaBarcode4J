@@ -33,6 +33,7 @@ public class TestLeica {
         
 //        Code128Util code128 = new Code128Util();
 //        code128.buildBarCode128("9886767", "png", myFile);
+        // tentando zuar a porra da tag
         
     }
     
